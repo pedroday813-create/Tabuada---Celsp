@@ -1,18 +1,19 @@
 package br.senai.sp.jandira.tabuada;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class HelloApplication extends Application {
 
@@ -26,8 +27,17 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
         //Definir o tamanho da tela
-        stage.setWidth(500);
-        stage.setHeight(500);
+       // stage.setWidth(500);
+        stage.setHeight(600);
+
+       //Controlando o Fechamento da janela do botão X
+        stage.setOnCloseRequest(event -> {
+            fechar();
+            event.consume();
+        });
+
+        //Bloquear
+        stage.setResizable(false);
 
         // Componente principal da tela
         VBox root = new VBox();
@@ -56,6 +66,9 @@ public class HelloApplication extends Application {
 
         //Criar o Multiplicando
         GridPane gridFormulario = new GridPane();
+        gridFormulario.setPadding(new Insets(10));
+        gridFormulario.setVgap(10);
+        gridFormulario.setHgap(10);
         Label labelMultiplicando = new Label("Multiplicando");
         textFieldmultiplicando = new TextField();
 
@@ -74,7 +87,12 @@ public class HelloApplication extends Application {
 
         //Criar componentes de botões
         HBox hBoxBotoes = new HBox();
+        hBoxBotoes.setAlignment(Pos.CENTER_RIGHT);
+        hBoxBotoes.setSpacing(10);
+        hBoxBotoes.setPadding(new Insets(10));
         Button btnCalcular = new Button("Calcular");
+        btnCalcular.setPrefWidth(90);
+        btnCalcular.setOnAction(e -> {});
         btnCalcular.setOnAction(e -> {
 
         });
@@ -82,7 +100,16 @@ public class HelloApplication extends Application {
 
 
         Button btnLimpar = new Button("Limpar");
+        btnLimpar.setOnAction(e -> {
+            limparFormulario();
+        });
+
+
         Button btnSair = new Button("Sair");
+        btnSair.setOnAction(e -> {
+            fechar();
+
+        });
 
         //Adicionar os Botões na boxBotões
         hBoxBotoes.getChildren().addAll(btnCalcular, btnLimpar, btnSair);
@@ -90,7 +117,9 @@ public class HelloApplication extends Application {
         //Adicionar um componente ListView
         VBox boxResultado = new VBox();
         Label labelResultado = new Label("Resultado");
-        labelResultado.setStyle("-fx-text-fill: rgb(0,255,13);-fx-font-size: 18;-fx-font-weight: bold");
+        boxResultado.setSpacing(20);
+
+        labelResultado.setStyle("-fx-text-fill: rgb(0,93,255);-fx-font-size: 18;-fx-font-weight: bold");
 
         //Adicionar o ListView
         listaTabuada = new ListView();
@@ -111,6 +140,29 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.setTitle("Tabuada");
         stage.show();
+    }
+
+    public void fechar() {
+        Alert alertaFechar = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "Confirma a saída do sistema",
+                ButtonType.YES,
+                ButtonType.NO
+        );
+
+        Optional<ButtonType> resposta = alertaFechar.showAndWait();
+
+       if (resposta.isPresent() && resposta.get() == ButtonType.YES) {
+           Platform.exit();
+       }
+    }
+
+    public void limparFormulario() {
+        textFieldmultiplicando.setText("");
+        textFieldMenorMultiplicador.setText("");
+        textFieldMaiorMultiplicador.setText("");
+        listaTabuada.getItems().clear();
+        textFieldmultiplicando.requestFocus();
     }
 
     public void calcularTabuada() {
